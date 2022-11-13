@@ -1,7 +1,7 @@
 #include <iostream>
 #include <windows.h>
 #include <math.h>
-
+#include <locale.h>
 #define PI   3.141592
 
 using namespace std;
@@ -25,9 +25,9 @@ void Bresenham_Elipse_Fuera();
 void Cuaterniones();
 int matriz[10][10], fila, columna, matriz2[10][10], opcion, decision = 0, op, matrizR[10][10], fila2, columna2;
 double matriz3[10][10], matrizRI[10][10], FyCMI, aux, pivote;
-double matrizT[4][4], matrizE[4][4], matrizRot[4][4], matrizRotY[4][4], matrizRotZ[4][4], Acciones[10][10], AccionesE[10][10];
-double AccionesRot[10][10], AccionesRotY[10][10], AccionesRotZ[10][10];
-
+double matrizT[4][4], matrizE[4][4], matrizRot[4][4], matrizRotY[4][4], matrizRotZ[4][4], acciones[10];
+double AccionesRot[10][10], AccionesRotY[10][10], AccionesRotZ[10][10], matrizR2[4][4], matrizR3[4][4], matrizTT[4][4];
+double matrizRXI[4][4], matrizRYI[4][4], matrizR4[4][4], matrizR5[4][4], matrizR6[4][4], matrizR7[4][4];
 COORD coord = { 0, 0 };
 void gotoxy(int x, int y)
 {
@@ -567,6 +567,7 @@ void Rotacion_X()
 			}
 			cout << "\n";
 		}
+		
 }
 void Rotacion_Y()
 {
@@ -642,6 +643,803 @@ void Rotacion_Z()
 					matrizRotZ[i][j] = 1;
 					if (matrizRotZ[i][j] == matrizRotZ[1][1])
 					{
+					matrizRotZ[1][1] = coseno;
+
+					}
+					if (matrizRotZ[i][j] == matrizRotZ[2][2])
+					{
+						matrizRotZ[2][2] = coseno;
+					}
+				}
+				else
+				{
+
+				if (matrizRotZ[i][j] == matrizRotZ[1][2])
+				{
+					matrizRotZ[1][2] = -1 * seno;
+				}
+				if (matrizRotZ[i][j] == matrizRotZ[2][1])
+				{
+					matrizRotZ[2][1] = seno;
+				}
+
+				}
+			}
+		}
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout << " " << matrizRotZ[i][j] << " ";
+			}
+			cout << "\n";
+		}
+
+}
+void Matriz_Compuesta()
+{
+	setlocale(LC_ALL, "spanish");
+	int op = 0, op2 = 0, op3 = 0, op4 = 0, acciones[7] = {}, rotEJE[7] = {}, pts;
+	float escal[7][4] = {}, MatEscal[4][4] = {}, rotANG[7] = {}, MatRot[4][4] = {}, tras[7][4] = {}, puntosPRP[8][2], Zprp, puntosTPRP[8][2];
+	float MatComp[4][4] = {}, mult, seno, coseno, tangente, rad, MatTras[4][4] = {}, puntos[8][4] = {}, MatAux[4][4] = {}, puntosT[8][4] = {};
+
+	cout << "\t MATRIZ COMPUESTA" << endl;
+	cout << "¿Cuántas acciones desea realizar? (Maximo 7)" << endl;
+	cin >> op2;
+
+
+
+	//Matriz Inicial y Auxiliar
+	for (int f = 0; f < 4; f++) {
+		for (int c = 0; c < 4; c++) {
+			if (f == c) {
+				MatAux[f][c] = 1;
+			}
+			else {
+				MatAux[f][c] = 0;
+			}
+		}
+	}
+
+	for (int f = 0; f < 4; f++) {
+		for (int c = 0; c < 4; c++) {
+			if (f == c) {
+				MatComp[f][c] = 1;
+			}
+			else {
+				MatComp[f][c] = 0;
+			}
+		}
+	}
+
+	if (op2 > 7) {
+		cout << "Ingrese una cantidad válida" << endl;
+		system("pause");
+		system("cls");
+	}
+	else {
+		//Registro de acciones
+		for (int i = 0; i < op2; i++) {
+			cout << "Ingrese la accion #" << i + 1 << endl;
+			cout << "1)Escalamiento" << endl << "2)Rotación" << endl << "3)Traslación" << endl;
+			cin >> op3;
+			//Escalamiento
+			if (op3 == 1) {
+				acciones[i] = 1;
+				cout << "Ingrese los valores de escalamiento" << endl;
+				cout << "Sx: ";
+				cin >> escal[i][0];
+				cout << endl << "Sy: ";
+				cin >> escal[i][1];
+				cout << endl << "Sz: ";
+				cin >> escal[i][2];
+				escal[i][3] = 1;
+			}
+			//Rotación
+			if (op3 == 2) {
+				acciones[i] = 2;
+				cout << "Ingrese el eje de rotación" << endl;
+				cout << "1)Rx" << endl << "2)Ry" << endl << "3)Rz" << endl;
+				cin >> op4;
+				switch (op4) {
+				case 1: {
+					cout << "\tRotación en X" << endl;
+					cout << "Ingrese el ángulo de rotación: ";
+					cin >> rotANG[i];
+					rotEJE[i] = 1;
+				}break;
+				case 2: {
+					cout << "\tRotación en Y" << endl;
+					cout << "Ingrese el ángulo de rotación: ";
+					cin >> rotANG[i];
+					rotEJE[i] = 2;
+				}break;
+				case 3: {
+					cout << "\tRotación en Z" << endl;
+					cout << "Ingrese el ángulo de rotación: ";
+					cin >> rotANG[i];
+					rotEJE[i] = 3;
+				}break;
+				}
+			}
+			//Traslación
+			if (op3 == 3) {
+				acciones[i] = 3;
+				cout << "Ingrese los valores de Traslación" << endl;
+				cout << "Tx: ";
+				cin >> tras[i][0];
+				cout << "Ty: ";
+				cin >> tras[i][1];
+				cout << "Tz: ";
+				cin >> tras[i][2];
+				tras[i][3] = 1;
+			}
+		}
+
+		//Procedimiento
+		for (int i = op2; i >= 0; i--) {
+			//Escalamiento
+			if (acciones[i] == 1) {
+				//Matriz Escalacion
+				for (int f = 0; f < 4; f++) {
+					for (int c = 0; c < 4; c++) {
+						if (f == c) {
+							MatEscal[f][c] = escal[i][f];
+						}
+						else {
+							MatEscal[f][c] = 0;
+						}
+					}
+				}
+
+				//Multiplicacion
+				for (int f = 0; f < 4; f++) {
+					for (int c = 0; c < 4; c++) {
+						mult = (MatComp[f][0] * MatEscal[0][c]) + (MatComp[f][1] * MatEscal[1][c]) + (MatComp[f][2] * MatEscal[2][c]) + (MatComp[f][3] * MatEscal[3][c]);
+						if (MatComp[f][c] = 1) {
+							MatComp[f][c] = mult;
+						}
+						if (MatComp[f][c] = 0) {
+							MatComp[f][c] = mult;
+						}
+						else {
+							MatComp[f][c] = MatComp[f][c] + mult;
+						}
+					}
+				}
+			}
+
+			//Rotación
+			if (acciones[i] == 2) {
+				rad = rotANG[i] * PI / 180;
+				seno = sin(rad);
+				coseno = cos(rad);
+				tangente = tan(rad);
+
+				for (int f = 0; f < 4; f++) {
+					for (int c = 0; c < 4; c++) {
+						if (f == c) {
+							MatAux[f][c] = MatComp[f][c];
+						}
+						else {
+							MatAux[f][c] = MatComp[f][c];
+						}
+					}
+				}
+
+				//Matriz Rotación en X
+				if (rotEJE[i] == 1) {
+					MatRot[0][0] = 1;
+					MatRot[0][1] = 0;
+					MatRot[0][2] = 0;
+					MatRot[0][3] = 0;
+					MatRot[1][0] = 0;
+					MatRot[1][1] = coseno;
+					MatRot[1][2] = -seno;
+					MatRot[1][3] = 0;
+					MatRot[2][0] = 0;
+					MatRot[2][1] = seno;
+					MatRot[2][2] = coseno;
+					MatRot[2][3] = 0;
+					MatRot[3][0] = 0;
+					MatRot[3][1] = 0;
+					MatRot[3][2] = 0;
+					MatRot[3][3] = 1;
+				}
+
+				//Matriz Rotación en Y
+				if (rotEJE[i] == 2) {
+					MatRot[0][0] = coseno;
+					MatRot[0][1] = 0;
+					MatRot[0][2] = seno;
+					MatRot[0][3] = 0;
+					MatRot[1][0] = 0;
+					MatRot[1][1] = 1;
+					MatRot[1][2] = 0;
+					MatRot[1][3] = 0;
+					MatRot[2][0] = -seno;
+					MatRot[2][1] = 0;
+					MatRot[2][2] = coseno;
+					MatRot[2][3] = 0;
+					MatRot[3][0] = 0;
+					MatRot[3][1] = 0;
+					MatRot[3][2] = 0;
+					MatRot[3][3] = 1;
+				}
+
+				//Matriz Rotación en Z
+				if (rotEJE[i] == 3) {
+					MatRot[0][0] = coseno;
+					MatRot[0][1] = -seno;
+					MatRot[0][2] = 0;
+					MatRot[0][3] = 0;
+					MatRot[1][0] = seno;
+					MatRot[1][1] = coseno;
+					MatRot[1][2] = 0;
+					MatRot[1][3] = 0;
+					MatRot[2][0] = 0;
+					MatRot[2][1] = 0;
+					MatRot[2][2] = 1;
+					MatRot[2][3] = 0;
+					MatRot[3][0] = 0;
+					MatRot[3][1] = 0;
+					MatRot[3][2] = 0;
+					MatRot[3][3] = 1;
+				}
+
+				//Multiplicacion
+				for (int f = 0; f < 4; f++) {
+					for (int c = 0; c < 4; c++) {
+						mult = (MatAux[f][0] * MatRot[0][c]) + (MatAux[f][1] * MatRot[1][c]) + (MatAux[f][2] * MatRot[2][c]) + (MatAux[f][3] * MatRot[3][c]);
+						if (MatComp[f][c] = 1) {
+							MatComp[f][c] = mult;
+						}
+						if (MatComp[f][c] = 0) {
+							MatComp[f][c] = mult;
+						}
+						else {
+							MatComp[f][c] = MatComp[f][c] + mult;
+						}
+					}
+				}
+			}
+
+			//Traslación
+			if (acciones[i] == 3) {
+				//Matriz Traslacion
+				MatTras[0][0] = 1;
+				MatTras[0][1] = 0;
+				MatTras[0][2] = 0;
+				MatTras[0][3] = tras[i][0];
+				MatTras[1][0] = 0;
+				MatTras[1][1] = 1;
+				MatTras[1][2] = 0;
+				MatTras[1][3] = tras[i][1];
+				MatTras[2][0] = 0;
+				MatTras[2][1] = 0;
+				MatTras[2][2] = 1;
+				MatTras[2][3] = tras[i][2];
+				MatTras[3][0] = 0;
+				MatTras[3][1] = 0;
+				MatTras[3][2] = 0;
+				MatTras[3][3] = 1;
+
+				//Multiplicación
+				for (int f = 0; f < 4; f++) {
+					for (int c = 0; c < 4; c++) {
+						mult = (MatComp[f][0] * MatTras[0][c]) + (MatComp[f][1] * MatTras[1][c]) + (MatComp[f][2] * MatTras[2][c]) + (MatComp[f][3] * MatTras[3][c]);
+						if (MatComp[f][c] = 1) {
+							MatComp[f][c] = mult;
+						}
+						if (MatComp[f][c] = 0) {
+							MatComp[f][c] = mult;
+						}
+						else {
+							MatComp[f][c] = MatComp[f][c] + mult;
+						}
+					}
+				}
+			}
+		}
+
+		//Imprimir Matriz Compuesta
+		cout << "Matriz Compuesta: " << endl;
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				cout << MatComp[i][j] << " ";
+			}
+			cout << endl;
+		}
+
+		//Ingresar puntos
+		cout << "¿Cuántos puntos va a modificar? (Máximo 8):" << endl;
+		cin >> pts;
+		for (int i = 0; i < pts; i++) {
+			cout << "Ingrese la componente X del punto " << i + 1 << ":" << endl;
+			cin >> puntos[i][0];
+			cout << "Ingrese la componente Y del punto " << i + 1 << ":" << endl;
+			cin >> puntos[i][1];
+			cout << "Ingrese la componente Z del punto " << i + 1 << ":" << endl;
+			cin >> puntos[i][2];
+			puntos[i][3] = 1;
+		}
+
+		//Procesado puntos
+		for (int i = 0; i < pts; i++) {
+			//Multiplicación
+			for (int f = 0; f < 3; f++) {
+				mult = (MatComp[f][0] * puntos[i][0]) + (MatComp[f][1] * puntos[i][1]) + (MatComp[f][2] * puntos[i][2]) + (MatComp[f][3] * puntos[i][3]);
+				puntosT[i][f] = mult;
+				puntosT[i][3] = 1;
+			}
+		}
+
+		//Imprimir Puntos
+		cout << "Puntos Procesados: " << endl;
+		for (int i = 0; i < pts; i++) {
+			for (int j = 0; j < 4; j++) {
+				cout << puntosT[i][j] << " "<<endl;
+			}
+			cout << endl;
+		}
+	}
+
+	//Perspectiva
+	cout << "Perspectiva" << endl;
+	cout << "Ingrese Z perspectiva: " << endl;
+	cin >> Zprp;
+
+	//Obtener X y Y prp
+	for (int i = 0; i < pts; i++)
+	{
+		puntosPRP[i][0] = (puntos[i][0] * Zprp) / (Zprp - puntos[i][2]);
+		puntosPRP[i][1] = (puntos[i][1] * Zprp) / (Zprp - puntos[i][2]);
+	}
+	for (int i = 0; i < pts; i++) {
+		puntosTPRP[i][0] = (puntosT[i][0] * Zprp) / (Zprp - puntosT[i][2]);
+		puntosTPRP[i][1] = (puntosT[i][1] * Zprp) / (Zprp - puntosT[i][2]);
+	}
+
+	//Imprimir puntos Perspectiva
+	cout << "Puntos Perspectiva Originales" << endl;
+	for (int i = 0; i < pts; i++)
+	{
+		for (int j = 0; j < 2; j++) {
+			cout << puntosPRP[i][j] << ",";
+		}
+		cout << endl;
+	}
+	cout << "Puntos Perspectiva Transformados" << endl;
+	for (int i = 0; i < pts; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			cout << puntosTPRP[i][j] << ",";
+		}
+		cout << endl;
+	}
+	system("pause");
+
+
+
+
+
+	
+		
+	
+		
+
+
+}
+void Rotacion_sobre_un_vector()
+{
+	
+	int x1, y1, z1, x2, y2, z2, angulo, vx,vy,vz,i,j,k;
+	float a, b, c, d, raiz, alfa, beta, beta2, alfa2, radbet, radalf, rad, seno, coseno,seno2,coseno2, seno3, coseno3,seno4,coseno4,seno5,coseno5;
+	float alfaMC, betaMC, tetaMC;
+	cout << "Ingrese coordenada en X para P1V" << endl;
+	cin >> x1;
+	cout << "Ingrese coordenada en Y para P1V" << endl;
+	cin >> y1;
+	cout << "Ingrese coordenada en Z para P1V" << endl;
+	cin >> z1;
+	cout << "Ingrese coordenada en X para P2V" << endl;
+	cin >> x2;
+	cout << "Ingrese coordenada en Y para P2V" << endl;
+	cin >> y2;
+	cout << "Ingrese coordenada en Z para P2V" << endl;
+	cin >> z2;
+	cout << "Ingrese el angulo" << endl;
+	cin >> angulo;
+
+	vx = x2 - x1;
+	vy = y2 - y1;
+	vz = z2 - z1;
+	if (vx==0 &&vy==0 || vx==0 && vz==0 || vy==0 && vz==0)
+	{
+		rad = (angulo * PI) / 180;
+		seno = sin(rad);
+		coseno = cos(rad);
+		cout << "MC=T^-1(" << x1 << "," << y1 << "," << z1 << ")*Rx(" << angulo << ")*T(" << x1 * -1 << "," << y1 * -1 << "," << z1 * -1 << ")" << endl;
+		system("pause");
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizT[i][j] = 1;
+
+				}
+				else
+				{
+					if (matrizT[i][j] == matrizT[1][4])
+					{
+						matrizT[1][4] = x1;
+
+					}
+					if (matrizT[i][j] == matrizT[2][4])
+					{
+						matrizT[2][4] = y1;
+
+					}
+					if (matrizT[i][j] == matrizT[3][4])
+					{
+						matrizT[3][4] = z1;
+
+					}
+				}
+
+
+			}
+		}
+		
+		
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizRot[i][j] = 1;
+					if (matrizRot[i][j] == matrizRot[2][2])
+					{
+						matrizRot[2][2] = coseno;
+
+					}
+					if (matrizRot[i][j] == matrizRot[3][3])
+					{
+						matrizRot[3][3] = coseno;
+					}
+				}
+				else
+				{
+
+					if (matrizRot[i][j] == matrizRot[2][3])
+					{
+						matrizRot[2][3] = -1 * seno;
+					}
+					if (matrizRot[i][j] == matrizRot[3][2])
+					{
+						matrizRot[3][2] = seno;
+					}
+
+				}
+			}
+		}
+		
+	
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				matrizR2[i][j] = 0;
+				for (int k = 1; k < 5; k++)
+				{
+					matrizR2[i][j] += matrizT[i][k] * matrizRot[k][j];
+				}
+			}
+
+		}
+		
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizTT[i][j] = 1;
+
+				}
+				else
+				{
+					if (matrizTT[i][j] == matrizTT[1][4])
+					{
+						matrizTT[1][4] = x1*-1;
+
+					}
+					if (matrizTT[i][j] == matrizTT[2][4])
+					{
+						matrizTT[2][4] = y1*-1;
+
+					}
+					if (matrizTT[i][j] == matrizTT[3][4])
+					{
+						matrizTT[3][4] = z1*-1;
+
+					}
+				}
+
+
+			}
+		}
+	
+
+
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				matrizR3[i][j] = 0;
+				for (int k = 1; k < 5; k++)
+				{
+					matrizR3[i][j] += matrizR2[i][k] * matrizTT[k][j];
+				}
+			}
+
+		}
+
+		cout << "Su matriz compuesta es: \n";
+		for (int i = 1; i < 5; i++)
+		{
+
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout <<matrizR3[i][j] << "\t ";
+			}
+			cout << "\n";
+		}
+
+		
+	}
+	else
+	{
+		raiz = sqrt(pow(vx, 2) + pow(vy, 2) + pow(vz, 2));
+		a = vx / raiz;
+		b = vy / raiz;
+		c = vz / raiz;
+		d = sqrt(pow(b, 2) + pow(c, 2));
+		alfa = acos(c / d);
+		
+		alfaMC = (alfa * 180) / PI;/*para la formula*/
+		radalf = (alfaMC * PI) / 180;
+		beta = asin(a / (sqrt(pow(a, 2) + pow(d, 2))));
+
+		betaMC = (beta * 180) / PI;/*para la formula*/
+		radbet = (betaMC * PI) / 180;
+		beta2 = radbet * -1;
+		alfa2 = radalf * -1;
+		/*RZ*/
+	
+		rad = (angulo * PI) / 180;
+	
+		seno = sin(rad);
+		coseno = cos(rad);
+		/*cout << angulo<< endl;
+		cout << seno << "," << coseno << endl;*/
+		system("pause");
+		/*RX inverso*/
+		/*cout << alfaMC*-1 << endl;*/
+		seno2 = sin(alfa2);
+		coseno2 = cos(alfa2);
+		/*cout << seno2 << endl;
+		cout << coseno2 << endl;
+		system("pause");*/
+		/*RY INVERSO*/
+		/*cout << betaMC*-1 << endl;*/
+		seno3 = sin((beta2));
+		coseno3 = cos((beta2));
+		/*cout << seno3 << "," << coseno3 << endl;
+		system("pause");*/
+		/*RX*/
+		/*cout << alfaMC << endl;*/
+	
+		seno4 = sin(radalf);
+		coseno4 = cos(radalf);
+		/*cout << seno4 << "," << coseno4 << endl;
+		system("pause");*/
+		/*RY*/
+		/*cout << betaMC << endl;*/
+		seno5 = sin(beta2*-1 );
+		coseno5 = cos(beta2*-1 );
+		/*cout << seno5 << "," << coseno5 << endl;*/
+	
+		/*system("pause");*/
+		cout << "MC=T^-1(" << x1 << "," << y1 << "," << z1 << ")*Rx^-1(" <<alfaMC*-1 << ") *Ry^-1(" << betaMC * -1 << ")*Rz(" << angulo<< ")*Ry(" << betaMC << ")*Rx(" << alfaMC << ") T(" << x1 * -1 << "," << y1 * -1 << "," << z1 * -1 << ")" << endl;
+		system("pause");
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizT[i][j] = 1;
+
+				}
+				else
+				{
+					if (matrizT[i][j] == matrizT[1][4])
+					{
+						matrizT[1][4] = x1;
+
+					}
+					if (matrizT[i][j] == matrizT[2][4])
+					{
+						matrizT[2][4] = y1;
+
+					}
+					if (matrizT[i][j] == matrizT[3][4])
+					{
+						matrizT[3][4] = z1;
+
+					}
+				}
+
+
+			}
+		}
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout << " " << matrizT[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizRot[i][j] = 1;
+					if (matrizRot[i][j] == matrizRot[2][2])
+					{
+						matrizRot[2][2] = coseno2;
+
+					}
+					if (matrizRot[i][j] == matrizRot[3][3])
+					{
+						matrizRot[3][3] = coseno2;
+					}
+				}
+				else
+				{
+
+					if (matrizRot[i][j] == matrizRot[2][3])
+					{
+						matrizRot[2][3] = -1 * seno2;
+					}
+					if (matrizRot[i][j] == matrizRot[3][2])
+					{
+						matrizRot[3][2] = seno2;
+					}
+
+				}
+			}
+		}
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout << " " << matrizRot[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				matrizR2[i][j] = 0;
+				for (int k = 1; k < 5; k++)
+				{
+					matrizR2[i][j] += matrizT[i][k] * matrizRot[k][j];
+				}
+			}
+
+		}
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout << " " << matrizR2[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizRYI[i][j] = 1;
+					if (matrizRYI[i][j] == matrizRYI[1][1])
+					{
+						matrizRYI[1][1] = coseno3;
+
+					}
+					if (matrizRYI[i][j] == matrizRYI[3][3])
+					{
+						matrizRYI[3][3] = coseno3;
+					}
+				}
+				else
+				{
+
+					if (matrizRYI[i][j] == matrizRYI[1][3])
+					{
+						matrizRYI[1][3] = seno3;
+					}
+					if (matrizRYI[i][j] == matrizRYI[3][1])
+					{
+						matrizRYI[3][1] = seno3*-1;
+					}
+
+				}
+			}
+		}
+		/*	for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout << " " << matrizRYI[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				matrizR3[i][j] = 0;
+				for (int k = 1; k < 5; k++)
+				{
+					matrizR3[i][j] += matrizR2[i][k] * matrizRYI[k][j];
+				}
+			}
+
+		}
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout << " " << matrizR3[i][j] << " ";
+			}
+			cout << "\n";
+		}
+
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizRotZ[i][j] = 1;
+					if (matrizRotZ[i][j] == matrizRotZ[1][1])
+					{
 						matrizRotZ[1][1] = coseno;
 
 					}
@@ -665,7 +1463,7 @@ void Rotacion_Z()
 				}
 			}
 		}
-		for (int i = 1; i < 5; i++)
+		/*for (int i = 1; i < 5; i++)
 		{
 			for (int j = 1; j < 5; j++)
 			{
@@ -674,190 +1472,221 @@ void Rotacion_Z()
 			}
 			cout << "\n";
 		}
-	
-}
-void Matriz_Compuesta()
-{
-	int acc, i, j, k, num_acc, resp;;
-	
 
-		/*cout << "Seleccione las acciones a realizar" << endl;*/
-		cout << "***RECUERDE QUE LA PRIMERA ACCION QUE SELECCIONE SERA LA ULTIMA,LA SEGUNDA LA PENULTIMA Y ASI SUCESIVAMENE***" << endl;
-		system("pause");
-		cout << "Desea agregar una traslacion?" << endl;
-		cout << "1-Si         2-No" << endl;
-		cin >> resp;
-		if (resp == 1)
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
 		{
-			Traslacion();
-		}
-	
-		/*cout << "Desea agregar una traslacion?" << endl;
-		cout << "1-Si         2-No" << endl;
-		cin >> resp;
-		if (resp == 1)
-		{
-			Escalacion();
-		}
-		cout << "Desea agregar una traslacion?" << endl;
-		cout << "1-Si         2-No" << endl;
-		cin >> resp;
-		if (resp == 1)
-		{
-			Rotacion_X();
-		}*/
-
-		for (k = 1; k < 6; k++)
-		{
-			for (i = 1; i < 5; i++)
+			for (int j = 1; j < 5; j++)
 			{
-				for (j = 1; j < 5; j++)
+				matrizR4[i][j] = 0;
+				for (int k = 1; k < 5; k++)
 				{
-				
+					matrizR4[i][j] += matrizR3[i][k] * matrizRotZ[k][j];
 				}
-				cout << "\n";
+			}
+
+		}
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout << " " << matrizR4[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizRotY[i][j] = 1;
+					if (matrizRotY[i][j] == matrizRotY[1][1])
+					{
+						matrizRotY[1][1] = coseno5;
+
+					}
+					if (matrizRotY[i][j] == matrizRotY[3][3])
+					{
+						matrizRotY[3][3] = coseno5;
+					}
+				}
+				else
+				{
+
+					if (matrizRotY[i][j] == matrizRotY[1][3])
+					{
+						matrizRotY[1][3] = seno5;
+					}
+					if (matrizRotY[i][j] == matrizRotY[3][1])
+					{
+						matrizRotY[3][1] = -1 * seno5;
+					}
+
+				}
 			}
 		}
-		/*cout << "Estas son las acciones que se pueden realizar" << endl;
-		cout << "1-Traslacion" << endl;
-		cout << "2-Escalacion" << endl;
-		cout << "3-Rotacion en eje X" << endl;
-		cout << "4-Rotacion en eje Y" << endl;
-		cout << "5-Rotacion en eje Z" << endl;*/
-	/*	cout << "Ingrese numero de acciones a realizar" << endl;
-		cin >> acc;
-		acc = acc + 1;*/
-		/*if (acc > 0 && acc < 6)
-		{*/
-			//for (k = 1; k <acc ; k++)
-			//{
-			//	
-			//			do
-			//			{
-			//				cout << "Ingrese el numero de la accion a realizar" << endl;
-			//				cout << "1-Traslacion" << endl;
-			//				cout << "2-Escalacion" << endl;
-			//				cout << "3-Rotacion en eje X" << endl;
-			//				cout << "4-Rotacion en eje Y" << endl;
-			//				cout << "5-Rotacion en eje Z" << endl;
-			//				cin >> num_acc;
-			//				/*Acciones[i] = num_acc;*/
-			//				switch (num_acc)
-			//				{
-			//				case 1:
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
 
-			//					Traslacion();
-			//					
-			//					break;
+				cout << " " << matrizRotY[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				matrizR5[i][j] = 0;
+				for (int k = 1; k < 5; k++)
+				{
+					matrizR5[i][j] += matrizR4[i][k] * matrizRotY[k][j];
+				}
+			}
 
-			//				case 2:
-			//					Escalacion();
-			//				
+		}
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
 
-			//					break;
+				cout << " " << matrizR5[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizRXI[i][j] = 1;
+					if (matrizRXI[i][j] == matrizRXI[2][2])
+					{
+						matrizRXI[2][2] = coseno4;
 
-			//				case 3:
-			//					Rotacion_X();
-			//					
-			//					break;
+					}
+					if (matrizRXI[i][j] == matrizRXI[3][3])
+					{
+						matrizRXI[3][3] = coseno4;
+					}
+				}
+				else
+				{
 
-			//				case 4:
-			//					Rotacion_Y();
-			//					
-			//					break;
+					if (matrizRXI[i][j] == matrizRXI[2][3])
+					{
+						matrizRXI[2][3] = -1 * seno4;
+					}
+					if (matrizRXI[i][j] == matrizRXI[3][2])
+					{
+						matrizRXI[3][2] = seno4;
+					}
 
-			//				case 5:
-			//					Rotacion_Z();
-			//					
-			//					break;
-			//				default:
-			//					cout << "Opcion incorrecta" << endl;
+				}
+			}
+		}
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
 
-			//				}
+				cout << " " << matrizRXI[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				matrizR6[i][j] = 0;
+				for (int k = 1; k < 5; k++)
+				{
+					matrizR6[i][j] += matrizR5[i][k] * matrizRXI[k][j];
+				}
+			}
+
+		}
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout << " " << matrizR6[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizTT[i][j] = 1;
+
+				}
+				else
+				{
+					if (matrizTT[i][j] == matrizTT[1][4])
+					{
+						matrizTT[1][4] = x1*-1;
+
+					}
+					if (matrizTT[i][j] == matrizTT[2][4])
+					{
+						matrizTT[2][4] = y1*-1;
+
+					}
+					if (matrizTT[i][j] == matrizTT[3][4])
+					{
+						matrizTT[3][4] = z1*-1;
+
+					}
+				}
 
 
-			//			} while (num_acc >= 6);
-			//	
-			//	
-			//}
+			}
+		}
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
 
-			//for (k = 1; k < acc; k++)
-			//{
-			//	cout << "Su accion #" << k << " es: " << endl;
-			//	for (i = 1; i < 5; i++)
-			//	{
-			//		for (j = 1; j < 5; j++)
-			//		{
-			//			Acciones[i][j] = matrizT[i][j];
-			//			Acciones[i][j] = matrizE[i][j];
-			//			Acciones[i][j] = matrizRot[i][j];
-			//			Acciones[i][j] = matrizRotY[i][j];
-			//			Acciones[i][j] = matrizRotZ[i][j];
-			//			
-			//			cout << " " << Acciones[i][j] << " ";
-			//			/*if (k == 2)
-			//			{
-			//				cout << " " << AccionesE[i][j] << " ";
-			//			}
-			//			if (k == 3)
-			//			{
-			//				cout << " " << AccionesE[i][j] << " ";
-			//			}*/
+				cout << " " << matrizTT[i][j] << " ";
+			}
+			cout << "\n";
+		}
+		system("pause");*/
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				matrizR7[i][j] = 0;
+				for (int k = 1; k < 5; k++)
+				{
+					matrizR7[i][j] += matrizR6[i][k] * matrizTT[k][j];
+				}
+			}
 
-			//		}
-			//		cout << "\n";
-			//	}
-			//	
-			//}
-	
- 
+		}
+		cout << "Su matriz compuesta es: " << endl;
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
 
-
-}
-void Rotacion_sobre_un_vector()
-{
-	
-	int x1, y1, z1, x2, y2, z2, angulo, vx,vy,vz,i,j,k;
-	float a, b, c, d, raiz, alfa,beta,beta2,alfa2,radbet, radalf;
-
-	cout << "Ingrese coordenada en X para P1V" << endl;
-	cin >> x1;
-	cout << "Ingrese coordenada en Y para P1V" << endl;
-	cin >> y1;
-	cout << "Ingrese coordenada en Z para P1V" << endl;
-	cin >> z1;
-	cout << "Ingrese coordenada en X para P2V" << endl;
-	cin >> x2;
-	cout << "Ingrese coordenada en Y para P2V" << endl;
-	cin >> y2;
-	cout << "Ingrese coordenada en Z para P2V" << endl;
-	cin >> z2;
-	cout << "Ingrese el angulo" << endl;
-	cin >> angulo;
-
-	vx = x2 - x1;
-	vy = y2 - y1;
-	vz = z2 - z1;
-	if (vx==0 &&vy==0 || vx==0 && vz==0 || vy==0 && vz==0)
-	{
-		cout << "MC=T^-1(" << x1 << "," << y1 << "," << z1 << ")*Rx(" << angulo << ")*T(" << x1 * -1 << "," << y1 * -1 << "," << z1 * -1 << ")" << endl;
-
-	}
-	else
-	{
-		raiz = sqrt(pow(vx, 2) + pow(vy, 2) + pow(vz, 2));
-		a = vx / raiz;
-		b = vy / raiz;
-		c = vz / raiz;
-		d = sqrt(pow(b, 2) + pow(c, 2));
-		alfa = acos(c / d);
-		radalf = (alfa * 180) / PI;
-		beta = asin(a / (sqrt(pow(a, 2) + pow(d, 2))));
-		radbet = (beta * 180) / PI;
-		beta2 = radbet * -1;
-		alfa2 = radalf * -1;
-	
-		cout << "MC=T^-1(" << x1 << "," << y1 << "," << z1 << ")*Rx^-1(" <<alfa2 << ") *Ry^-1(" << beta2 * -1 << ")*Rz(" << angulo<< ")*Ry(" << beta2 << ")*Rx(" << radalf << ") T(" << x1 * -1 << "," << y1 * -1 << "," << z1 * -1 << ")" << endl;
+				cout << " " << matrizR7[i][j] << " ";
+			}
+			cout << "\n";
+		}
 
 	}
 
@@ -2244,12 +3073,5 @@ void Cuaterniones()
 
 
 }
-
-
-
-
-
-
-
 
 

@@ -15,7 +15,7 @@ void Escalacion();
 void Rotacion_X();
 void Rotacion_Y();
 void Rotacion_Z();
-void Matriz_Compuesta(); //INCOMPLETA PAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//
+void Matriz_Compuesta();
 void Rotacion_sobre_un_vector();
 void Bresenham_Lineas();
 void Bresenham_Circulos();

@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <math.h>
 #include <locale.h>
+#include "Cuaterniones.h"
 #define PI   3.141592
 
 using namespace std;
@@ -15,7 +16,7 @@ void Escalacion();
 void Rotacion_X();
 void Rotacion_Y();
 void Rotacion_Z();
-void Matriz_Compuesta();
+void Matriz_Compuesta(); 
 void Rotacion_sobre_un_vector();
 void Bresenham_Lineas();
 void Bresenham_Circulos();
@@ -125,6 +126,10 @@ void menu()
 		case 8:
 			Cuaterniones();
 			return menu();
+			break;
+		case 9:
+			cout << "Tenga un buen dia";
+			exit(0);
 			break;
 		default:
 			cout << "OPCION INVALIDA" << endl;
@@ -249,7 +254,7 @@ void Inverso_Aditivo_Matrices()
 	{
 		for (int j = 1; j < columna; j++)
 		{
-			matrizR[i][j] = matriz[i][j] - matriz2[i][j];
+			matrizR[i][j] = matriz[i][j] + matriz2[i][j];
 		}
 
 	}
@@ -567,7 +572,48 @@ void Rotacion_X()
 			}
 			cout << "\n";
 		}
-		
+		/*for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+				if (i == j)
+				{
+					matrizRot[i][j] = 1;
+					if (matrizRot[i][j] == matrizRot[2][2])
+					{
+						matrizRot[2][2] = coseno;
+
+					}
+					if (matrizRot[i][j] == matrizRot[3][3])
+					{
+						matrizRot[3][3] = coseno;
+					}
+				}
+				else
+				{
+					
+					if (matrizRot[i][j] == matrizRot[2][3])
+					{
+						matrizRot[2][3] = -1 * seno;
+					}
+					if (matrizRot[i][j] == matrizRot[3][2])
+					{
+						matrizRot[3][2] = seno;
+					}
+					
+				}
+			}
+		}
+
+		for (int i = 1; i < 5; i++)
+		{
+			for (int j = 1; j < 5; j++)
+			{
+
+				cout << " " << matrizRot[i][j]<<" ";
+			}
+			cout << "\n";
+		}*/
 }
 void Rotacion_Y()
 {
@@ -1259,7 +1305,7 @@ void Rotacion_sobre_un_vector()
 		/*cout << seno5 << "," << coseno5 << endl;*/
 	
 		/*system("pause");*/
-		cout << "MC=T^-1(" << x1 << "," << y1 << "," << z1 << ")*Rx^-1(" <<alfaMC*-1 << ") *Ry^-1(" << betaMC * -1 << ")*Rz(" << angulo<< ")*Ry(" << betaMC << ")*Rx(" << alfaMC << ") T(" << x1 * -1 << "," << y1 * -1 << "," << z1 * -1 << ")" << endl;
+		cout << "MC=T^-1(" << x1 << "," << y1 << "," << z1 << ")*Rx^-1(" <<alfaMC*-1 << ") *Ry^-1(" << betaMC  << ")*Rz(" << angulo<< ")*Ry(" << betaMC*-1 << ")*Rx(" << alfaMC << ") T(" << x1 * -1 << "," << y1 * -1 << "," << z1 * -1 << ")" << endl;
 		system("pause");
 		for (int i = 1; i < 5; i++)
 		{
@@ -1711,7 +1757,7 @@ void Bresenham_Lineas()
 	x = x0;
 	y = y0;
 	m = (y1 - y0) / (x1 - x0);
-	cout << m << endl;
+
 	system("pause");
 	if (m > 0 && m < 1)
 	{
@@ -3055,23 +3101,69 @@ void Bresenham_Elipse_Fuera()
 }
 void Cuaterniones()
 {
-	double q, coseno, sen,uu, ui,uj,uk,angl,Q,Px,Py,Pz,rad,I,J,K;
-	cout << "Ingrese en angulo" << endl;
-	cin >> angl;
-	cout << "Ingrese i" << endl;
-	cin >> I;
-	cout << "Ingrese j" << endl;
-	cin >> J;
-	cout << "Ingrese k" << endl;
-	cin >> K;
-	rad = (angl * PI) / 180;
-	coseno = cos(rad / 2);
-	sen = sin(rad / 2);
-	uu = sqrt((pow(I, 2) + pow(J, 2) + pow(K, 2)));
-	
-	/*NO SE :(*/
+	Cuaternio punto, conjugado, q, vector, final, pprimas;
+	double v1 = 0, v2 = 0, v3 = 0, a1 = 0, a2 = 0, a3 = 0, grados = 0, magnitud = 0;
+
+
+
+		cout << "Ingresa el punto" << endl;
+	cout << "x: ";
+	cin >> a1;
+	cout << "y: ";
+	cin >> a2;
+	cout << "z: ";
+	cin >> a3;
+
+	punto.SetA(0);
+	punto.SetA1(a1);
+	punto.SetA2(a2);
+	punto.SetA3(a3);
+
+
+
+		cout << "Ingresa el vector" << endl;
+	cout << "x: ";
+	cin >> v1;
+	cout << "y: ";
+	cin >> v2;
+	cout << "z: ";
+	cin >> v3;
+
+
+
+		cout << "Ingresa los grados a rotar: ";
+	cin >> grados;
+
+	vector.SetA(cos((grados / 2) * PI / 180));
+	vector.SetA1(v1);
+	vector.SetA2(v2);
+	vector.SetA3(v3);
+
+	magnitud = sqrt(pow(v1, 2) + pow(v2, 2) + pow(v3, 2));
+
+	q.SetA(cos((grados / 2) * PI / 180));
+	q.SetA1((v1 / magnitud) * sin((grados / 2) * PI / 180));
+	q.SetA2((v2 / magnitud) * sin((grados / 2) * PI / 180));
+	q.SetA3((v3 / magnitud) * sin((grados / 2) * PI / 180));
+
+	pprimas = q * punto;
+
+	conjugado = Cuaternio(q.GetA(), -q.GetA1(), -q.GetA2(), -q.GetA3());
+
+	final = pprimas * conjugado;
+
+	cout << "(" << final.GetA1() << "i, " << final.GetA2() << "j, " << final.GetA3() << "k)" << endl;
+
+	system("pause>nul");
 
 
 }
+
+
+
+
+
+
+
 
 
